@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    function Event () {
+      this.eventsQueue = {}
+    }
+    Event.prototype.$on = function (attr, callback, key) {
+        
+        // if (this.eventsQueue[key]) {
+        //     this.eventsQueue[key].push(callback)
+        // } else {
+        //     this.eventsQueue[key] = [callback]
+        // }
+        if (this.eventsQueue[attr]) {
+            this.eventsQueue[attr].push(callback)
+        } else {
+            this.eventsQueue[attr] = [callback]
+        }
+    }
+    function getParent (thisobj, parentKey) {
+      // 触发事件 如果还有父元素 则继续触发
+      // 传入
+      let cbArr = thisobj.eventsBus.eventsQueue[parentKey]
+      console.log(thisobj, parentKey, '======cb')
+      cbArr && cbArr.map(item => {
+        item()
+      })
+      thisobj.$parent.$parent && getParent(thisobj.$parent, thisobj.parentKey)
+    }
+    Event.prototype.$emit = function (attr, oldVal, newVal, thisobj) {
+      console.log(thisobj, attr, oldVal, newVal, '====thisobj')
+      if (oldVal !== newVal) {
+        thisobj.$parent && getParent(thisobj, thisobj.parentKey)
+        this.eventsQueue[attr] && this.eventsQueue[attr].map(item => {
+          item(oldVal, newVal)
+        })
+      }
+    }
+    function Observer (obj, parent, thisobj) {
+        this.data = obj
+        this.$parent = thisobj
+        this.parentKey = parent
+        this.makeObserver(obj, parent, thisobj)
+        this.eventsBus = new Event()
+    }
+    Observer.prototype.makeObserver = function (obj, parent, thisobj) {
+      let val
+      for (let item in obj) {
+        if (obj.hasOwnProperty(item)) {
+          val = obj[item]
+          if (typeof val === 'object') {
+            new Observer(val, item, this)
+          }
+        }
+        this.setterAndGetter(item, val, parent, thisobj)
+      }
+    }
+    Observer.prototype.setterAndGetter = function (item, val, parent, thisobj) {
+      Object.defineProperty(this.data, item, {
+        configurable: true,
+        enumerable: true,
+        get: () => {
+          console.log(this, '=========get')
+          console.log('你访问了' + item);
+        // 如果有parent,则给这个值再设置getter,setter 这个对象是个obj
+        /*
+        firstName: {
+
+        }
+        */
+          return val;
+        },
+        set: (value) => {
+            let thisObj = this
+            let thisObj2 = this
+            let tempParentKey
+            let parObj
+            let cb
+            // 取最外层的事件队列 找到对应callback给父元素事件队列加上cb
+            while (thisObj.$parent) {
+              thisObj = thisObj.$parent
+            }
+            let topArr = thisObj.eventsBus.eventsQueue
+            while (thisObj2 && !tempParentKey) {
+              if (Object.keys(topArr).includes(thisObj2.parentKey)) {
+                parObj = thisObj2.$parent
+                tempParentKey = thisObj2.parentKey
+                cb = topArr[tempParentKey]
+              }
+              thisObj2 = thisObj2.$parent
+            }
+            console.log(thisObj == parObj, '=====thisObj')
+            if (thisObj !== parObj) {
+              // let cb = thisObj.eventsBus.eventsQueue[this.parentKey]
+              if (parObj.eventsBus.eventsQueue[tempParentKey]) {
+                parObj.eventsBus.eventsQueue[tempParentKey].push(...cb)
+              } else {
+                parObj.eventsBus.eventsQueue[tempParentKey] = [...cb]
+              }
+              alert(11)
+              delete thisObj.eventsBus.eventsQueue[tempParentKey]
+            }
+            this.eventsBus.$emit(item, val, value, this)
+            // 触发监听父元素变化的方法 知道父元素
+            console.log('你设置了' + item + ', 新的值为' + value + '父元素为' + parent)
+            if(typeof value === 'object') {
+                new Observer(value, item, this)
+            }
+            val = value
+        }
+      })
+    }
+    // function parentObserver (val, parent) {
+    //     Observer.call(this, val)
+    // }
+    // parentObserver.prototype = Object.create(Observer.prototype)
+    Observer.prototype.$watch = function (attr, callback) {
+      console.log(this, attr, '=======$watch')
+      // if (!this.data[attr]) {
+      //   for (let item in this.data) {
+      //     if (Object.keys(this.data[item]).includes(attr)) {
+      //       this.eventsBus.$on(attr, callback, item)
+      //     }
+      //   }
+      // } else {
+      this.eventsBus.$on(attr, callback)
+      // }
+    }
+    // let app1 = new Observer({
+    //   name: 'youngwind',
+    //   age: 25
+    // });
+
+    let app2 = new Observer({
+      university: 'bupt',
+      major: 'computer',
+      test: {
+        first: 1,
+        second: {
+            third: 3,
+            firth: {
+              five: 5,
+              six: {
+                seven: 7,
+                eight: 8
+              }
+            }
+        }
+      }
+    });
+
+    // 要实现的结果如下：
+    // app1.data.name // 你访问了 name
+    // app1.data.age = 100;  // 你设置了 age，新的值为100
+    // app2.data.university // 你访问了 university
+    // app2.data.major = 'science'  // 你设置了 major，新的值为 science
+    // app1.data.name = {
+    //     firstName: 1,
+    //     lastName: 2
+    // }
+    // app1.$watch('age', function (oldVal, newVal) {
+    //   console.log(`我的年纪变了，原来是${oldVal}现在已经是：${newVal}岁了`)
+    // })
+    // app1.$watch('name', function (oldVal, newVal) {
+    //   console.log(`name变了,可能是firstName,可能是lastName`)
+    // })
+    // app2.$watch('test', function (oldVal, newVal) {
+    //   console.log(`test变了`)
+    // })
+    app2.$watch('second', function (oldVal, newVal) {
+      console.log(`second变了啊啊啊啊啊啊啊`)
+    })
+    // app1.data.name.firstName = 333
+    app2.data.test.second.firth.six.eight = 444
+    // 父元素知道 触发事件
+    // app1.data.age = 12
+    /*
+    问题: 必须在$watch方法添加给了属性(如test)之后 再添加一个对象给它 因为这时new Oberver能传进去this的值、
+    否则父元素不能监听到子元素的变化
+    */
+  </script>
+</body>
+</html>

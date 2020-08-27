@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="longen">11</div>
+    <script>
+        // var test = document.getElementById("longen");
+        // // 创建事件
+        // var evt = document.createEvent('Event');
+        // // 定义事件类型
+        // evt.initEvent('customEvent',true,true);
+        // // 监听事件
+        // test.addEventListener('customEvent',function(){
+        //     console.log("111");
+
+        // },false);
+        // // 触发事件
+        // test.dispatchEvent(evt);
+
+        var test = document.getElementById("longen");
+        test.myEvent = 0;
+        function foo(){
+            alert('已经监听到了');
+
+        }
+        test.attachEvent("onpropertychange",function(event) {
+            if (event.propertyName == "myEvent") {
+                foo();
+            }
+        });
+        test.myEvent++;
+    </script>
+</body>
+</html>
