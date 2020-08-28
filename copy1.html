@@ -25,19 +25,19 @@
         }
     }
     function getParent (thisobj, parentKey) {
+      console.log(thisobj, parentKey, '=======')
       // 触发事件 如果还有父元素 则继续触发
       // 传入
+      if (!thisobj) return false
       let cbArr = thisobj.eventsBus.eventsQueue[parentKey]
-      console.log(thisobj, parentKey, '======cb')
       cbArr && cbArr.map(item => {
         item()
       })
-      thisobj.$parent.$parent && getParent(thisobj.$parent, thisobj.parentKey)
+      getParent(thisobj.$parent, thisobj.parentKey)
     }
     Event.prototype.$emit = function (attr, oldVal, newVal, thisobj) {
-      console.log(thisobj, attr, oldVal, newVal, '====thisobj')
       if (oldVal !== newVal) {
-        thisobj.$parent && getParent(thisobj, thisobj.parentKey)
+        getParent(thisobj, thisobj.parentKey)
         this.eventsQueue[attr] && this.eventsQueue[attr].map(item => {
           item(oldVal, newVal)
         })
@@ -49,6 +49,7 @@
         this.parentKey = parent
         this.makeObserver(obj, parent, thisobj)
         this.eventsBus = new Event()
+        console.log(this.data, this.eventsBus, '==========eventsBus')
     }
     Observer.prototype.makeObserver = function (obj, parent, thisobj) {
       let val
@@ -67,7 +68,6 @@
         configurable: true,
         enumerable: true,
         get: () => {
-          console.log(this, '=========get')
           console.log('你访问了' + item);
         // 如果有parent,则给这个值再设置getter,setter 这个对象是个obj
         /*
@@ -96,7 +96,6 @@
               }
               thisObj2 = thisObj2.$parent
             }
-            console.log(thisObj == parObj, '=====thisObj')
             if (thisObj !== parObj) {
               // let cb = thisObj.eventsBus.eventsQueue[this.parentKey]
               if (parObj.eventsBus.eventsQueue[tempParentKey]) {
@@ -104,7 +103,6 @@
               } else {
                 parObj.eventsBus.eventsQueue[tempParentKey] = [...cb]
               }
-              alert(11)
               delete thisObj.eventsBus.eventsQueue[tempParentKey]
             }
             this.eventsBus.$emit(item, val, value, this)
@@ -122,7 +120,6 @@
     // }
     // parentObserver.prototype = Object.create(Observer.prototype)
     Observer.prototype.$watch = function (attr, callback) {
-      console.log(this, attr, '=======$watch')
       // if (!this.data[attr]) {
       //   for (let item in this.data) {
       //     if (Object.keys(this.data[item]).includes(attr)) {
@@ -174,8 +171,8 @@
     // app2.$watch('test', function (oldVal, newVal) {
     //   console.log(`test变了`)
     // })
-    app2.$watch('second', function (oldVal, newVal) {
-      console.log(`second变了啊啊啊啊啊啊啊`)
+    app2.$watch('test', function (oldVal, newVal) {
+      console.log(`test变了啊啊啊啊啊啊啊`)
     })
     // app1.data.name.firstName = 333
     app2.data.test.second.firth.six.eight = 444
