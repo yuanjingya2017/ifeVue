@@ -37,6 +37,7 @@
     }
     Event.prototype.$emit = function (attr, oldVal, newVal, thisobj) {
       if (oldVal !== newVal) {
+        // 遍历所有父节点 执行 当前节点 父辈祖父辈等等 事件队列里面有他们的事件
         getParent(thisobj, thisobj.parentKey)
         this.eventsQueue[attr] && this.eventsQueue[attr].map(item => {
           item(oldVal, newVal)
@@ -46,7 +47,9 @@
     function Observer (obj, parent, thisobj) {
         this.data = obj
         this.$parent = thisobj
+        // 父节点指针
         this.parentKey = parent
+        // 父节点key
         this.makeObserver(obj, parent, thisobj)
         this.eventsBus = new Event()
         console.log(this.data, this.eventsBus, '==========eventsBus')
@@ -79,25 +82,37 @@
         },
         set: (value) => {
             let thisObj = this
+            // 指针
             let thisObj2 = this
             let tempParentKey
             let parObj
             let cb
             // 取最外层的事件队列 找到对应callback给父元素事件队列加上cb
             while (thisObj.$parent) {
+              // 指针用来遍历向上逐层 找到最顶层事件队列
               thisObj = thisObj.$parent
             }
             let topArr = thisObj.eventsBus.eventsQueue
+            // 最顶部队列
             while (thisObj2 && !tempParentKey) {
+              // 找到当前节点的父节点
               if (Object.keys(topArr).includes(thisObj2.parentKey)) {
+                // 最顶部事件队列中 找是否有所有父辈节点的事件
                 parObj = thisObj2.$parent
+                // 再指向这个值的父节点
                 tempParentKey = thisObj2.parentKey
+                // 找到的有事件的父属性
                 cb = topArr[tempParentKey]
+                // 找到该事件
               }
               thisObj2 = thisObj2.$parent
+              // 遍历指针
             }
             if (thisObj !== parObj) {
+              // 如果顶层父元素是找到的父元素则不执行下面
               // let cb = thisObj.eventsBus.eventsQueue[this.parentKey]
+              // 从最顶层事件队列把事件移到相应父节点的事件队列中
+              // 数据结构重组
               if (parObj.eventsBus.eventsQueue[tempParentKey]) {
                 parObj.eventsBus.eventsQueue[tempParentKey].push(...cb)
               } else {
@@ -173,6 +188,9 @@
     // })
     app2.$watch('test', function (oldVal, newVal) {
       console.log(`test变了啊啊啊啊啊啊啊`)
+    })
+    app2.$watch('second', function (oldVal, newVal) {
+      console.log(`second变了啊啊啊啊啊啊啊`)
     })
     // app1.data.name.firstName = 333
     app2.data.test.second.firth.six.eight = 444
