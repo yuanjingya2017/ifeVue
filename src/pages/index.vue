@@ -1,14 +1,24 @@
 <template>
   <div class="hello">
-    hello test
+      index
+    <HelloWorld msg="hello test"></HelloWorld>
+    <h1>{{ msg }}</h1>
+    <div v-for="(item, index) in showArr2" :key="index">
+      <div v-html="item"></div>
+    </div>
+    <div v-if="showArr2.length !== showArr.length">...</div>
   </div>
 </template>
 
 <script>
+import HelloWorld from '@/components/HelloWorld'
 export default {
-  name: 'HelloWorld',
+  name: 'indexPage',
   props: {
     msg: String
+  },
+  components: {
+      HelloWorld
   },
   data () {
     return {
@@ -28,23 +38,23 @@ export default {
     }
   },
   beforeCreate () {
-      console.log('this is son beforeCreated')
+      console.log('this is parent beforeCreated')
   },
   created () {
-      console.log('this is son created')
+      console.log('this is parent created')
     // this.showMessage()
   },
   beforeMount () {
-    console.log('this is son beforeMount')
+    console.log('this is parent beforeMount')
   },
   mounted () {
-    console.log('this is son mounted')
+    console.log('this is parent mounted')
   },
   beforeDestroy () {
-      console.log('this is son beforeDestroy')
+      console.log('this is parent beforeDestroy')
   },
   destroyed () {
-      console.log('this is son destroyed')
+      console.log('this is parent destroyed')
   },
   methods: {
     showMessage () {
