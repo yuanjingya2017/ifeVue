@@ -1,17 +1,25 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <a @click="jumpTo">点击跳转</a>
+    <router-view />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+// import indexPage from './pages/index'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    // indexPage
+  },
+  methods: {
+    jumpTo () {
+      console.log(this)
+      this.$router.push({
+        path: '/test'
+      })
+    }
   }
 }
 </script>
