@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="div">click</div>
+    <script>
+        window.data=5
+        var foo={
+            data:6,
+            click(){
+                console.log(this)
+                console.log(this.data)
+            }
+        }
+        let div = document.getElementById('div')
+        div.addEventListener('click',foo.click)
+        foo.click()
+        let test = foo.click
+        test()
+    </script>
+</body>
+</html>
