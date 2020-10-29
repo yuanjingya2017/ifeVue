@@ -6,12 +6,19 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 </head>
-<body>
+<body onload="onloadBody()">
     <div id="app">
         <p>姓名：<span>{{user.name}}</span></p>
         <p>年龄：{{user.age}}</p>
     </div>
-    <script src="./Vue-test.js"></script>
+    <script>
+        function onloadFunc () {
+            console.log('script onload')
+        }
+        function onloadBody () {
+            console.log('onloadBody')
+        }
+    </script>
     <script>
         // let app = new Vue({
         //     el: 'app',
@@ -25,4 +32,200 @@
 
     </script>
 </body>
+<script src="./Vue-test.js" onload="onloadFunc()"></script>
+<script>
+    let tree = {
+        val: 1,
+        left: {
+            val: 2,
+            left: {
+                val: 4,
+                left: {
+                    val: 8,
+                    left: null,
+                    right: null
+                },
+                right: {
+                    val: 9,
+                    left: null,
+                    right: null
+                }
+            },
+            right: null
+        },
+        right: {
+            val: 3,
+            left: {
+                val: 6,
+                left: {
+                    val: 10,
+                    left: {
+                        val: 18,
+                        left: null,
+                        right: null
+                    },
+                    right: null
+                },
+                right: null
+            },
+            right: null
+        }
+    }
+</script>
+<script>
+function throttle (callback, time) {
+    let tempTime
+    return function (...res) {
+        clearTimeout(tempTime)
+        tempTime = setTimeout(() => {
+            console.log(this)
+            callback.call(this, ...res)
+        }, time)
+    }
+}
+function search (text, name) {
+    return new Promise((resolve, reject)=> {
+        setTimeout(() => {
+            console.log(...arguments)
+            resolve(arguments)
+        }, 2000);
+    })
+}
+async function onChange(text, name) {
+    const res = await search(text, name);
+    console.log(res, 111)
+}
+
+const newOnChange = throttle(onChange, 200);
+
+function getTree (tree, num) {
+    let stack = []
+    let arr = []
+    let tempArr = []
+    let tempNode = tree
+    stack.push(tempNode)
+    while(stack.length || tempNode) {
+        tempArr.push(tempNode.val)
+        console.log(tempNode, '======tempNode')
+        if (tempNode.left) {
+            tempNode = tempNode.left
+        } else if (tempNode.right) {    
+            stack.push(tempNode)
+        } else if (!tempNode.left && !tempNode.right) {
+            arr.push(tempArr)
+            tempArr = []
+            tempNode = stack.pop()
+            console.log(tempNode, 'else')
+            if (tempNode) {
+                tempArr.push(tempNode.val)
+                tempNode = tempNode.right
+            }
+        }
+        console.log(JSON.stringify(stack), stack.length)
+    }
+    console.log(arr, '=====arr')
+}
+newOnChange(1, 'y')
+newOnChange(11, 'j')
+newOnChange(111, 'y')
+newOnChange(1111, 'hi')
+
+function FindPath(root, expectNumber)
+{
+    // write code here
+    let result = [];
+    if (root === null) return result;
+    getAllPath(root, expectNumber, [], 0, result);
+    return result;
+}
+// result 存储所有通过的结果 path暂存通过当前路径
+function getAllPath (root, expectNumber, path, curSum, result) {
+    curSum += root.val;
+    path.push(root.val);
+    if (curSum == expectNumber && root.left == null && root.right == null) {
+        result.push(path.slice(0));
+    }
+    if (root.left != null) {
+        getAllPath(root.left, expectNumber, path, curSum, result)
+    }
+    if (root.right != null) {
+        getAllPath(root.right, expectNumber, path, curSum, result)
+    }
+    path.pop();
+}
+
+
+
+//省略代码
+function limitLoad(urls, handler, limit) {
+    // 对数组做一个拷贝
+    const sequence = [].concat(urls)
+    let promises = [];
+
+    //并发请求到最大数
+    promises = sequence.splice(0, limit).map((url, index) => {
+        // 这里返回的 index 是任务在 promises 的脚标，
+        //用于在 Promise.race 之后找到完成的任务脚标
+        return handler(url).then(() => {
+            return index
+        });
+    });
+
+    (async function loop() {
+        let p = Promise.race(promises);
+        for (let i = 0; i < sequence.length; i++) {
+            p = p.then((res) => {
+                promises[res] = handler(sequence[i]).then(() => {
+                    return res
+                });
+                return Promise.race(promises)
+            })
+        }
+    })()
+}
+limitLoad(urls, loadImg, 3)
+
+function getTree (tree) {
+    let stack = [];
+    stack.push(tree)
+    while (stack.length) {
+        let tempNode = stack.pop()
+        console.log(JSON.stringify(stack), stack.length)
+        if (!!tempNode.left || !!tempNode.right) {
+            let temp = tempNode.left;
+            tempNode.left = tempNode.right;
+            tempNode.right = temp;
+        }
+        if (tempNode.left) {
+            stack.push(tempNode.left);
+        }
+        if (tempNode.right) {
+            stack.push(tempNode.right);
+        }
+    }
+    console.log(tree)
+}
+function getTree2 (tree) {
+    if (!tree) return false;
+    [tree.left, tree.right] = [tree.right, tree.left]
+    tree.left && getTree2(tree.left);
+    tree.right && getTree2(tree.right);
+}
+
+function FindPath(root, expectNumber)
+{
+    // write code here
+    let target = expectNumber
+    if (!root) return false
+    path.push(root.val)
+    target -= root.val;console.log(target, root.val, path);
+    if (!root.left && !root.right && target === 0) {
+        pathAll.push(path.splice(0))
+    }
+    FindPath(root.left, target)
+    FindPath(root.right, target)
+    let temp = path.pop();
+    target += temp;
+}
+</script>
 </html>
