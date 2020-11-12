@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .container {
+            /* width: 100%; */
+            overflow-x: scroll;
+        }
+        .con {
+            width: 300%;
+            display: inline-block;
+        }
+        .div1 {
+            float: left;
+            width: 200px;
+            height: 100px;
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="con">
+            <div class="div1"></div>
+            <div class="div1"></div>
+            <div class="div1"></div>
+            <div class="div1"></div>
+            <div class="div1"></div>
+        </div>
+    </div>
+    <script>
+        var longestPalindrome = function(s) {
+            if (s.length === 1) return s;
+            let maxLength = 1;
+            let begin = 0;
+            for (let i = 0; i < s.length - 1; i++) {
+                let oddLen = getStr(s, i, i);
+                let evenLen = getStr(s, i, i+1);
+                let tempMax = Math.max(oddLen, evenLen);
+                if (tempMax > maxLength) {
+                    maxLength = tempMax;
+                    // ???
+                    begin = i - ((maxLength - 1)/2);
+                }
+            }
+            return s.substr(begin, begin + maxLength)
+        }
+        function getStr(str, left, right) {
+            // 边界情况 left < 0 或者 right > str.length
+            let leng = str.length
+            let i = left;
+            let j = right;
+            while(i >= 0 && j < leng) {
+                if (str[i] === str[j]) {
+                    i--;
+                    j++;
+                } else {
+                    break;
+                }
+            }
+            return j - i;
+        }
+
+        var a = 1;
+        var b = 2;
+        function aaa () {
+            console.log(this.a, 'this.a')
+            console.log(a, 'a')
+            console.log(this.b)
+            // console.log(b)
+            var a = 111;
+            let b = 222;
+            console.log(this, 222)
+            return () => {
+                console.log(this.a, 'this.a==bibao')
+                console.log(a, 'a==bibao')
+                console.log(this.b, 'this.b==bibao')
+                console.log(b, 'b==bibao')
+                console.log(this, 111)
+            }
+        }
+        let d = aaa()
+        d()
+        let container = document.getElementById('container')
+        class ahh {
+            constructor() {
+                this.count = 0
+            }
+            sayCount () {
+                console.log(this, typeof this)
+                this.count++
+                alert(this.count)
+            }
+        }
+        let ahhh = new ahh()
+        container.onclick = ahhh.sayCount
+    </script>
+</body>
+</html>

@@ -45,6 +45,7 @@ myPromise.prototype.then = function (onfulfilled, onrejected) {
             }, 0);
         }
         if (self.status === 'reject') {
+            alert('reject')
             setTimeout(() => {
                 try {
                     let x = onrejected(self.reason);
@@ -55,6 +56,7 @@ myPromise.prototype.then = function (onfulfilled, onrejected) {
             }, 0);
         }
         if (self.status === 'pending') {
+            alert('pending')
             self.onResolved.push(function () {
                 setTimeout(() => {
                     try {
