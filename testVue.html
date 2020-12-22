@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="./vue.js"></script>
 </head>
 <body>
-    <div id="app">
-        {{message}}
+    <div id="app" @click="change">
+        {{message.text}}
         <ol>
             <todo-item></todo-item>
         </ol>
@@ -20,11 +20,23 @@
             template: '<li>这是个待办项</li>'
         })
         var app = new Vue({
-        el: '#app',
+            el: '#app',
             data: {
-                message: 'Hello Vue!'
+                message: {
+                    text: 'hello vue'
+                }
+            },
+            methods: {
+                change () {
+                    this.message = {
+                        text: 2222
+                    }
+                }
             }
         })
+        console.log(app, '===app')
+        app.message.text = 11111
+        // app.$set(app, 'message', 11111)
     </script>
 </body>
 </html>

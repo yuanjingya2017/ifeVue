@@ -139,5 +139,505 @@
     否则父元素不能监听到子元素的变化
     */
   </script>
+  <script>
+    /**
+    * Definition for singly-linked list.
+    * function ListNode(val, next) {
+    *     this.val = (val===undefined ? 0 : val)
+    *     this.next = (next===undefined ? null : next)
+    * }
+    */
+    /**
+    * @param {ListNode} head
+    * @return {ListNode}
+    */
+    var oddEvenList = function(head) {
+        console.log(JSON.stringify(head))
+        let oddheader = head // new 奇数
+        let evenheader = head.next // old 偶数
+        let evenpointer = evenheader
+        let oddpointer = oddheader
+        while(evenpointer && evenpointer.next) {
+          oddpointer.next = evenpointer.next
+          oddpointer = oddpointer.next
+          evenpointer.next = oddpointer.next
+          evenpointer = evenpointer.next
+        }
+        oddpointer.next = evenheader
+        return oddheader
+    };
+
+    /**
+    * @param {number[][]} people
+    * @return {number[][]}
+    */
+    var reconstructQueue = function(people) {
+        people.sort((a,b) => {
+          if (a[0] !== b[0]) {
+            return a[0] - b[0]
+          } else {
+            return b[1] - a[1]
+          }
+        })
+        let arr = []
+        for (let i = 0; i < people.length; i++) {
+          let rank = people[i][1] + 1;
+          for (let j = 0; j < people.length; j++) {
+            console.log(j, arr[j], '====1')
+            if (!arr[j]) {
+              --rank;
+              console.log(j, arr[j], i, people[i], rank, '====2')
+              if (rank == 0) {
+                console.log(j, arr[j], i, people[i], rank, '===3')
+                arr[j] = people[i]
+                break
+              }
+            }
+          }
+        }
+        console.log(people, arr)
+    };
+
+    var countNodes = function(root) {
+      let p = root;
+      let stack = [p];
+      let i = 0;
+      while(p) {
+          p = stack.shift(p);
+          i++;
+          p.left && stack.push(cur.left)
+          p.right && stach.push(cur.right)
+      }
+      return i;
+    };
+
+    var maximumGap = function(nums) {
+      if (nums.length < 2) return 0;
+      nums.sort()
+      let numsArr = []
+      for (let i = 0; i < nums.length - 1; i++) {
+        numsArr.push(Math.abs(nums[i] - nums[i+1]))
+      }
+      numsArr.sort()
+      return numsArr[numsArr.length - 1]
+    };
+
+    /**
+     * @param {string} S
+     * @return {string}
+     */
+    var reorganizeString = function(S) {
+      let Slen = S.length
+      S = S.split('').sort()
+      let map = new Map()
+      S.map(item => {
+        map.has(item) ? map.set(item, map.get(item) + 1):map.set(item, 1)
+      })
+      map.sort((a,b) => {
+        console.log(Object.keys(b)[0], Object.keys(a)[0], a, b)
+        return b[Object.keys(b)[0]] - a[Object.keys(a)[0]]
+      })
+      console.log(map)
+      let str = ''
+      str += S.splice(0, 1)
+      let flag = true
+      while(S.length && flag) {
+        flag = false
+        for (let j = 0; j < S.length; j++) {
+          if (S[j]!==str[str.length - 1]) {
+            flag = true
+            str += S.splice(j, 1)
+          }
+        }
+      }
+      if (str.length === Slen) {
+        return str
+      } else {
+        return ''
+      }
+    };
+
+    /**
+     * S1 = "0"
+      S2 = "011"
+      S3 = "0111001"
+      S4 = "011100110110001"
+    */
+    /**
+     * @param {number} n
+     * @param {number} k
+     * @return {character}
+     */
+    var findKthBit = function(n, k) {
+      return getStr(n)[k-1]
+    };
+    var getStr = function (n) {
+      if (n==1) return '0'
+      let temp = getStr(n-1)
+      return (temp + '1' + change(temp)).toString()
+    }
+    var change = function(str) {
+        let arr = str.split('')
+        arr = arr.map(item => {
+          if (item == 1) {
+            item  = 0
+          } else {
+            item = 1
+          }
+          return item
+        })
+        return arr.reverse().join('')
+    }
+    var number=2;
+    var obj={
+      number:4,
+      /*匿名函数自调*/
+      fn1:(function(){
+        console.log(this)
+        var number;
+        this.number*=2; // 8
+
+        number=number*2; // NaN
+        number=3; // 3
+        console.log(this.number, '==window')
+        console.log(number, '==闭包')
+        return function(){
+          console.log(this)
+          var num=this.number;
+          this.number*=2; // 8
+          console.log(num); // 4
+          number*=3; // 9
+          alert(number);
+        }
+      })(),
+
+      db2:function(){
+        this.number*=2;
+      }
+    }
+
+    var fn1=obj.fn1;
+
+    alert(number); // 2
+
+    fn1(); // 4 9 win 8
+
+    obj.fn1(); // 8 9
+
+    alert(window.number); // 8
+
+    alert(obj.number); // 8
+
+    /**
+    * @param {number} n
+    * @return {number}
+    */
+    var isPrim = function (n) {
+      let temp = Math.ceil(Math.sqrt(n))
+      for (let i = 2; i <= temp; i++) {
+        if (n%i == 0) {
+          return false
+        }
+      }
+      return true
+    }
+    var countPrimes = function(n) {
+      if (n <= 2) return 0
+      let count = 1
+      for (let i = 3; i < n; i++) {
+        if (isPrim(i)) {
+          count++
+        }
+      }
+      return count
+    };
+    /**
+    * @param {character[]} tasks
+    * @param {number} n
+    * @return {number}
+    */
+    var leastInterval = function(tasks, n) {
+      if (n < 2) {
+        return tasks.length
+      }
+      let taskHash = []
+      let taskObj = new Map()
+      let resArr = []
+      let index = 0;
+      tasks.map(item => {
+        if (taskObj.has(item)) {
+          let countTemp = taskObj.get(item) + 1
+          taskObj.set(item, countTemp)
+        } else {
+          taskObj.set(item, 1)
+        }
+      })
+      // console.log(taskObj)
+      taskHash = Array.from(taskObj)
+      taskHash.sort((a,b) => {
+        return b[1] - a[1]
+      })
+      for (let i = 0; i < taskHash.length; i++) {
+        // console.log(taskHash)
+        let count = taskHash[i][1]
+        if (!resArr[i]) {
+          index = i
+        } else {
+          let temp = i
+          while(resArr[temp]) {
+            temp++
+          }
+          index = temp
+        }
+        console.log(index, 'index')
+        for (let j = 0; j < count; j++) {
+          resArr[index + j*(n+1)] = taskHash[i][0]
+          // console.log(index + j*(n+1), 'in arr', resArr)
+        }
+      }
+      // console.log(resArr)
+      return resArr.length
+    };
+    /**
+    * @param {number} numRows
+    * @return {number[][]}
+    */
+    var generate = function(numRows) {
+      if (numRows == 0) return []
+      if (numRows == 1) return [[1]]
+      else if (numRows == 2) {
+        return [
+          [1],
+          [1,1]
+        ]
+      }
+      let temp = [
+        [1],
+        [1,1]
+      ]
+      for (let i = 1; i < numRows-1; i++) {
+        let sub = [1]
+        let tempsub = temp[i]
+        for (let j = 0; j < tempsub.length - 1; j++) {
+          sub.push(tempsub[j] + tempsub[j+1])
+        }
+        sub.push(1)
+        temp.push(sub)
+      }
+      return temp
+    };
+    /**
+    * @param {number[]} bills
+    * @return {boolean}
+    */
+    var lemonadeChange = function(bills) {
+      var arr = new Map([
+        [5,0],
+        [10,0],
+        [20,0]
+      ])
+      bills.sort((a,b) => {return a - b})
+      for (let i = 0; i < bills.length; i++) {
+        if (bills[i] == 5) {
+          let temp = arr.get(5)
+          arr.set(5, ++temp)
+        } else if (bills[i] == 10) {
+          let temp = arr.get(10)
+          arr.set(10, ++temp)
+        } else if (bills[i] == 20) {
+          let temp = arr.get(20)
+          arr.set(20, ++temp)
+        }
+      }
+      arr = Array.from(arr)
+      if (arr[0][1] == 0 && arr[1][1] == 0) return true
+      arr.sort((a, b) => {
+        return b[0] - a[0]
+      })
+      let flag = true
+      bills.map(item => {
+        if (item == 20) {
+          if (arr[1][1] > 0) {
+            arr[1][1]--
+            if (arr[2][1] > 0) {
+              arr[2][1]--
+            } else {
+              flag = false
+            }
+          } else if (arr[1][1] >= 3) {
+            arr[2][1] = arr[2][1] - 3
+          }
+        }
+        console.log(item)
+        if (item == 10) {
+          console.log(arr[2][1])
+          if (arr[2][1] > 0) {
+            arr[1][1]--
+          } else {
+            flag = false
+          }
+        }
+      })
+      return flag
+    };
+    var monotoneIncreasingDigits = function(N) {
+      let temp = (N + '').split('')
+      let flag = true
+      for (let i = 0; i < temp.length - 1; i++) {
+        if (temp[i] > temp[i+1]) {
+          flag = false
+        }
+      }
+      if (flag) return N
+      // 遍历比他小的数看谁是最大的单调递增整数
+    };
+    /**
+     * @param {number[][]} matrix
+     * @return {void} Do not return anything, modify matrix in-place instead.
+     */
+    var rotate = function(matrix) {
+      let length = matrix.length - 1
+      let level = Math.floor(length/2) + 1
+      for (let j = 0; j <= level; j++) {
+        let rest = length - j
+        let tempArr = []
+        // 上copy
+        tempArr = [].concat(matrix[j])
+        // 左->上
+        // matrix[j] = []
+        for (let i = 0 + j; i <= length - j; i++) {
+          matrix[j][i] = matrix[rest - i][j]
+        }
+        // 右copy
+        let tempArr1 = []
+        // 上->右
+        for (let i = 0 + j; i <= length - j; i++) {
+          tempArr1.push(matrix[i][rest])
+          matrix[i][rest] = tempArr[j][i]
+        }
+        // 右->下
+        let tempArr2 = [].concat(matrix[rest])
+        matrix[rest] = tempArr1.reverse()
+        // 下->左
+        for (let i = 0 + j; i <= length - j; i++) {
+          matrix[i][j] = tempArr2[i]
+        }
+        console.log(matrix, '===matrix')
+      }
+      return matrix
+    };
+    /*
+    给你一个字符串 s ，请你去除字符串中重复的字母，使得每个字母只出现一次。需保证 返回结果的字典序最小（要求不能打乱其他字符的相对位置）。
+
+    注意：该题与 1081 https://leetcode-cn.com/problems/smallest-subsequence-of-distinct-characters 相同
+
+    示例 1：
+
+    输入：s = "bcabc"
+    输出："abc"
+    示例 2：
+
+    输入：s = "cbacdcbc"
+    输出："acdb"
+     
+
+    提示：
+
+    1 <= s.length <= 104
+    s 由小写英文字母组成
+    */
+  function getIt (s) {
+    let charCode = 'a'.charCodeAt(0)
+    let charCodeArr = new Map()
+    for (let i = 0; i < 26; i++) {
+      charCodeArr.set(charCode + i, 0)
+    }
+    for (let i = 0; i < s.length; i++) {
+      let tempChar = s[i].charCodeAt(0)
+      let temp = charCodeArr.get(tempChar) + 1
+      charCodeArr.set(tempChar, temp)
+    }
+    let resStr = ''
+    charCodeArr = Array.from(charCodeArr)
+    charCodeArr.map(item => {
+      if (item[1] > 0) {
+        resStr += String.fromCharCode(item[0])
+      }
+    })
+    return resStr
+  }
+  function getNum (s) {
+    let stack = []
+    let visited = new Array(26).fill(0)
+    // 1 遍历字符串数组 字符入栈 判断是否被访问过 访问过该字母数量-1
+    // 没有访问过 当前栈顶元素字符大于目前遍历字符 看字符串右边是否还有该字符 有则出栈 置为未访问过
+    // 否则 栈顶元素小于当前字符置为已访问过 push
+    for (let i = 0; i < s.length; i++) {
+      let ch = s[i]
+      if (!visited[ch.charCodeAt() - 'a'.charCodeAt()]) {
+        // let top = stack[stack.length - 1];
+        while(stack.length > 0 && stack[stack.length - 1] > ch) {
+          // console.log(s.substr(i))
+          if (s.substr(i).includes(stack[stack.length - 1])) {
+            visited[stack[stack.length - 1].charCodeAt() - 'a'.charCodeAt()] = 0
+            stack.pop()
+          } else {
+            break
+          }
+        }
+        visited[ch.charCodeAt() - 'a'.charCodeAt()] = 1
+        stack.push(ch)
+      }
+    }
+    return stack.join('')
+  }
+
+
+
+
+
+
+
+  var minCostClimbingStairs = function(cost) {
+    const n = cost.length;
+    let dp = [];
+    dp[0] = dp[1] = 0;
+    // 与 cost对应
+    for (let i = 2; i <= n; i++) {
+      dp[i] = Math.min(dp[i-1]+cost[i-1], dp[i-2]+cost[i-2])
+    }
+    return dp[n]
+  };
+
+
+
+
+
+
+
+  var removeDuplicateLetters = function(s) {
+    const vis = new Array(26).fill(0);
+    const num = _.countBy(s);
+    
+    const sb = new Array();
+    for (let i = 0; i < s.length; i++) {
+        const ch = s[i];
+        if (!vis[ch.charCodeAt() - 'a'.charCodeAt()]) {
+            while (sb.length > 0 && sb[sb.length - 1] > ch) {
+                if (num[sb[sb.length - 1]] > 0) {
+                    vis[sb[sb.length - 1].charCodeAt() - 'a'.charCodeAt()] = 0;
+                    sb.pop();
+                } else {
+                    break;
+                }
+            }
+            vis[ch.charCodeAt() - 'a'.charCodeAt()] = 1;
+            sb.push(ch);
+        }
+        num[ch]--;
+    }
+    return sb.join('');
+  };
+  </script>
 </body>
 </html>

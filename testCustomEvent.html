@@ -26,7 +26,6 @@
         test.myEvent = 0;
         function foo(){
             alert('已经监听到了');
-
         }
         test.attachEvent("onpropertychange",function(event) {
             if (event.propertyName == "myEvent") {
